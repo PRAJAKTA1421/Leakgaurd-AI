@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}Add Data Source - LeakGuard AI{% endblock %}
+{% block content %}
+<main class="upload-page">
+  <section class="upload-card">
+    <span class="upload-icon">PDF</span>
+    <h1>Upload Subscription Statement</h1>
+    <p>Upload your bank, card, or subscription statement as a PDF. LeakGuard AI will use it to find recurring subscriptions.</p>
+    <form method="post" enctype="multipart/form-data" class="upload-form">
+      <label class="file-picker" for="statement"><strong>Choose a PDF file</strong><small>PDF only · Maximum file size: 10 MB</small></label>
+      <input id="statement" name="statement" type="file" accept="application/pdf,.pdf" required />
+      <button class="topbar-add" type="submit">Upload PDF</button>
+    </form>
+  </section>
+</main>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "layout.html" %} {% block title %}Register - LeakGuard AI{% endblock
+%} {% block topbar %}{% endblock %} {% block content %}
+<main class="auth-split">
+  <section class="split-panel panel-form">
+    <div class="panel-brand">
+      <span class="brand-mark">LG</span>
+      <span class="brand-name">LeakGuard AI</span>
+    </div>
+
+    <div class="panel-copy">
+      <p class="eyebrow">Create Account</p>
+      <h1>Build your LeakGuard AI profile and start saving smarter.</h1>
+      <p class="panel-subtitle">
+        Sign up to discover hidden subscriptions and reduce monthly waste.
+      </p>
+    </div>
+
+    <form method="post" action="{{ url_for('register') }}" class="auth-form">
+      <label>
+        <span>Full Name</span>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          placeholder="Enter your full name"
+        />
+      </label>
+      <label>
+        <span>Email</span>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          placeholder="Enter your email"
+        />
+      </label>
+      <label>
+        <span>Password</span>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Create a password"
+        />
+      </label>
+      <button type="submit" class="btn btn-primary full-width">Register</button>
+    </form>
+
+    <div class="or-divider">
+      <span>OR</span>
+    </div>
+
+    <button class="btn btn-secondary full-width">Continue with Google</button>
+
+    <p class="form-footer">
+      Already have an account? <a href="{{ url_for('login') }}">Login</a>
+    </p>
+  </section>
+
+  <section class="split-panel panel-info">
+    <h2>Revolutionize subscription monitoring with smarter automation.</h2>
+    <p>
+      LeakGuard AI scans recurring payments, detects hidden charges, and alerts
+      you to silent price increases so you can save more every month.
+    </p>
+    <blockquote>
+      “LeakGuard AI has completely transformed our subscription management
+      process. It's reliable, efficient, and keeps our spending under control.”
+    </blockquote>
+    <div class="testimonial-row">
+      <div class="testimonial-avatar">MK</div>
+      <div>
+        <p class="testimonial-name">Mina Kapoor</p>
+        <p class="testimonial-role">Finance Lead at SpendWise</p>
+      </div>
+    </div>
+    <div class="partner-strip">
+      <span>Join 1k teams</span>
+      <div class="partner-logos">
+        <span>Discord</span>
+        <span>Mailchimp</span>
+        <span>Grammarly</span>
+        <span>Dropbox</span>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

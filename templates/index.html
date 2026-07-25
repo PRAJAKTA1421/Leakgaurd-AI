@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}LeakGuard AI{% endblock %}
+{% block topbar %}
+<header class="landing-topbar">
+  <a href="{{ url_for('home') }}" class="landing-brand"><span>◒</span> LeakGuard AI</a>
+  <nav><a href="{{ url_for('login') }}">Login</a><a class="landing-start" href="{{ url_for('register') }}">Get Started</a></nav>
+</header>
+{% endblock %}
+{% block content %}
+<main class="landing-page">
+  <section class="landing-hero">
+    <div class="landing-copy"><span class="landing-eyebrow">✦ AI-Powered Financial Intelligence</span><h1>Stop Losing Money on <em>Hidden Subscriptions</em></h1><p>LeakGuard AI scans your bank statements to detect recurring payments, find unused subscriptions, and help you save more every month.</p><div class="landing-actions"><a class="landing-start" href="{{ url_for('add_data_source') }}">Upload Statement</a><a class="watch-demo" href="#features">◉ Watch Demo</a></div><small class="trusted">● ● ● ●　 Trusted by 10,000+ smart savers</small></div>
+    <div class="phone-showcase"><div class="floating-card bank-card">▰<br><small>Bank secured</small></div><div class="phone"><div class="notch"></div><small>Leak Score</small><b>82<sup>/100</sup></b><em>High Risk</em><div class="phone-gauge"></div><div class="saving-box"><small>Potential Savings</small><strong>₹2,150</strong><span>Per Month</span></div></div><div class="shield">✓</div></div>
+  </section>
+  <section class="landing-features" id="features"><article><b>▣</b><h2>Leak Score</h2><p>Get a smart risk score based on your spending patterns.</p></article><article><b>◉</b><h2>Subscription Detection</h2><p>AI detects all recurring subscriptions and payments.</p></article><article><b>✦</b><h2>AI Financial Advisor</h2><p>Get personalized recommendations to save more.</p></article><article><b>▥</b><h2>Spending Analytics</h2><p>Beautiful insights and charts to understand your money.</p></article></section>
+</main>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block title %}Subscriptions - LeakGuard AI{% endblock %}
+{% block content %}
+<section class="feature-page subscriptions-feature-page">
+  {% set active_page = 'subscriptions' %}{% include "_app_sidebar.html" %}
+<main class="subscriptions-page">
+  <header class="subscriptions-header"><h1>Subscriptions</h1><p>Manage and review all your subscriptions.</p></header>
+  <section class="subscriptions-workspace">
+    <div class="subscriptions-toolbar"><div class="subscription-filters"><button class="is-active">All (18)</button><button>Active (11)</button><button>At Risk (7)</button><button>Unused (4)</button></div><div class="subscription-search">Search subscription... <span>⌕</span></div><button class="filter-button" aria-label="Filter">⚑</button></div>
+    <div class="full-subscription-table">
+      <div class="full-row full-table-head"><span>Subscription</span><span>Category</span><span>Amount</span><span>Billing Cycle</span><span>Next Billing</span><span>Status</span><span>Action</span></div>
+      <div class="full-row"><span><b class="service netflix">N</b><strong>Netflix</strong><small>netflix.com</small></span><span>Entertainment</span><span><strong>₹649</strong><small class="up">+₹150 ↑</small></span><span>Monthly</span><span>May 30, 2025<small>In 2 days</small></span><span><mark class="price">Price Hike</mark></span><button>Review</button></div>
+      <div class="full-row"><span><b class="service spotify">≋</b><strong>Spotify Premium</strong><small>spotify.com</small></span><span>Music</span><span><strong>₹119</strong></span><span>Monthly</span><span>May 30, 2025<small>In 2 days</small></span><span><mark class="active-status">Active</mark></span><button>Review</button></div>
+      <div class="full-row"><span><b class="service prime">a</b><strong>Amazon Prime</strong><small>amazon.in</small></span><span>Shopping</span><span><strong>₹299</strong><small class="up">+₹50 ↑</small></span><span>Monthly</span><span>May 31, 2025<small>In 3 days</small></span><span><mark class="price">Price Hike</mark></span><button>Review</button></div>
+      <div class="full-row"><span><b class="service adobe">A</b><strong>Adobe CC</strong><small>adobe.com</small></span><span>Productivity</span><span><strong>₹1,675</strong></span><span>Monthly</span><span>May 30, 2025<small>In 2 days</small></span><span><mark class="unused">Unused</mark></span><button class="cancel">Cancel</button></div>
+      <div class="full-row"><span><b class="service swiggy">●</b><strong>Swiggy One</strong><small>swiggy.com</small></span><span>Food</span><span><strong>₹99</strong></span><span>Quarterly</span><span>Jun 15, 2025<small>In 18 days</small></span><span><mark class="active-status">Active</mark></span><button>Review</button></div>
+      <div class="full-row"><span><b class="service youtube">▶</b><strong>YouTube Premium</strong><small>youtube.com</small></span><span>Entertainment</span><span><strong>₹139</strong></span><span>Monthly</span><span>May 10, 2025<small>In 13 days</small></span><span><mark class="unused">Unused</mark></span><button class="cancel">Cancel</button></div>
+      <div class="full-row"><span><b class="service google">G</b><strong>Google One 100GB</strong><small>one.google.com</small></span><span>Utilities</span><span><strong>₹130</strong><small class="up">+₹20 ↑</small></span><span>Monthly</span><span>May 8, 2025<small>In 10 days</small></span><span><mark class="price">Price Hike</mark></span><button>Review</button></div>
+    </div>
+  </section>
+</main>
+</section>
+{% endblock %}

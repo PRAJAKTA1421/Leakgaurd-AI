@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}LeakGuard AI{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    {% block topbar %}
+    <header class="topbar">
+      <a href="{{ url_for('home') }}" class="app-brand">
+        <span class="app-logo" aria-hidden="true">◒</span>
+        <span>
+          <strong>LeakGuard AI</strong>
+          <small>Subscription Leak Detector</small>
+        </span>
+      </a>
+
+      <nav class="topbar-actions" aria-label="Dashboard actions">
+        <span class="welcome-user">Welcome, <strong>{{ current_user }}</strong></span>
+        <a href="{{ url_for('add_data_source') }}" class="topbar-add upload-source-link">Add Data Source</a>
+        <a href="#data-sources" class="topbar-add">＋&nbsp; Add Data Source</a>
+        <a href="#notifications" class="topbar-icon" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
+        </a>
+        <a href="#messages" class="topbar-icon" aria-label="Messages">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3zM3 7l9 6 9-6" /></svg>
+        </a>
+        <a href="{{ url_for('settings') }}" class="topbar-profile" aria-label="Your profile">{{ user_initials }}</a>
+      </nav>
+    </header>
+    {% endblock %}
+    <div class="page-shell">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash-grid">
+        {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %} {% block content %}{% endblock %}
+    </div>
+  </body>
+</html>
