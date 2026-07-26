@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: leakguard-ai
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: MISTRAL_API_KEY
+        sync: false

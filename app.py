@@ -51,7 +51,7 @@ env_path = Path(__file__).with_name(".env")
 
 
 app = Flask(__name__)
-app.secret_key = "replace-with-a-secure-secret"
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "development-only-secret")
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 app.config["UPLOAD_FOLDER"] = Path(app.root_path) / "uploads"
 app.config["UPLOAD_FOLDER"].mkdir(exist_ok=True)
