@@ -952,4 +952,6 @@ def chat():
     return jsonify(error="The chat service is temporarily unavailable. Please try again."), 502
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Keep one process during local development so configuration changes in
+    # .env take effect predictably after restarting the server.
+    app.run(debug=True, use_reloader=False)

@@ -2112,3 +2112,23 @@ font-size:28px;
 font-weight:700;
 
 }
+
+/* Readability: use a larger type scale throughout the application. */
+:root { font-size: 18px; }
+
+body:has(.dashboard-page) .sidebar-link,
+body:has(.feature-page) .sidebar-link { font-size: 0.98rem; padding: 12px 10px; }
+body:has(.dashboard-page) .sidebar-logout,
+body:has(.feature-page) .sidebar-logout { font-size: 0.96rem; }
+body:has(.dashboard-page) .dashboard-main-heading h1,
+body:has(.feature-page) .feature-main h1 { font-size: 1.55rem; }
+body:has(.dashboard-page) .dashboard-main-heading p,
+body:has(.feature-page) .feature-main header p { font-size: 0.9rem; }
+body:has(.dashboard-page) .metric-card > span,
+body:has(.dashboard-page) .metric-card > small,
+body:has(.dashboard-page) .subscriptions-card,
+body:has(.dashboard-page) .insight-card,
+body:has(.feature-page) .feature-main { font-size: 0.9rem; }
+body:has(.dashboard-page) .metric-card > b { font-size: 1.45rem; }
+body:has(.dashboard-page) .subscriptions-card h2,
+body:has(.dashboard-page) .insight-card h2 { font-size: 1.08rem; }
