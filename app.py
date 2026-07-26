@@ -12,7 +12,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 from routes import report
 from services.parser import StatementParser
-from flask import Flask, jsonify, render_template, redirect, url_for, request, flash, session
+from flask import Flask, jsonify, render_template, redirect, url_for, request, flash, session, send_from_directory
 from werkzeug.utils import secure_filename
 from services.recurring_detector import detect_recurring
 from services.leak_score import LeakScoreEngine
@@ -55,6 +55,12 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "development-only-secret")
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 app.config["UPLOAD_FOLDER"] = Path(app.root_path) / "uploads"
 app.config["UPLOAD_FOLDER"].mkdir(exist_ok=True)
+
+
+@app.route("/styles.css")
+def styles():
+    """Serve the stylesheet through Flask for hosts that don't expose /static."""
+    return send_from_directory(app.static_folder, "styles.css", mimetype="text/css")
 
 users = {}
 parser = StatementParser()
