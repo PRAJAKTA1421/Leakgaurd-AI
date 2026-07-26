@@ -3,17 +3,707 @@
 {% block content %}
 <section class="feature-page">
   {% set active_page = page %}{% include "_app_sidebar.html" %}
-  <main class="feature-main"><header><div><h1>{{ title }}</h1><p>{{ subtitle }}</p></div>{% if page == 'reports' %}<button class="purple-action">⇩ Export Report</button>{% elif page == 'data_sources' %}<button class="purple-action">＋ Connect Source</button>{% elif page == 'unused' %}<button class="purple-action">View Usage Insights</button>{% endif %}</header>
+  <main class="feature-main"><header><div><h1>{{ title }}</h1><p>{{ subtitle }}</p></div>{% if page == 'reports' %}
+   <a href="{{ url_for('download_report') }}"
+class="purple-action">
+
+⇩ Download PDF Report
+
+</a>
+    {% elif page == 'data_sources' %}<button class="purple-action">＋ Connect Source</button>{% elif page == 'unused' %}
+    <button class="purple-action">View Usage Insights</button>{% endif %}</header>
   {% if page == 'transactions' %}
-    <div class="feature-tabs"><button class="active">Recurring</button><button>One-time</button><span>May 1 - May 31, 2025　⌄</span></div><div class="stat-strip"><div>Total Transactions <b>124</b></div><div>Recurring Transactions <b>38</b></div><div>Total Amount <b>₹6,842</b></div><div>Recurring Amount <b>₹5,319</b></div></div><div class="dark-data-table"><div class="data-head">Date　 Description　 Merchant　 Category　 Amount　 Type</div>{% for row in [('May 28, 2025','Netflix','Netflix','Entertainment','₹649','Recurring'),('May 27, 2025','Spotify Premium','Spotify','Music','₹119','Recurring'),('May 26, 2025','Amazon Prime','Amazon','Shopping','₹299','Recurring'),('May 24, 2025','Adobe CC','Adobe','Productivity','₹1,675','Recurring'),('May 22, 2025','Swiggy One','Swiggy','Food','₹99','Recurring'),('May 20, 2025','YouTube Premium','Google','Entertainment','₹139','Recurring')] %}<div class="data-line">{{ row[0] }}　 {{ row[1] }}　 {{ row[2] }}　 {{ row[3] }}　 <b>{{ row[4] }}</b>　 <i>{{ row[5] }}</i></div>{% endfor %}</div>
+    <div class="feature-tabs"><button class="active">Recurring</button><button>One-time</button><span>May 1 - May 31, 2025　⌄</span></div>
+    <div class="stat-strip">
+    <div>
+        Total Transactions
+        <b>{{ transactions|length }}</b>
+    </div>
+
+    <div>
+        Recurring Transactions
+        <b>{{ subscriptions|length }}</b>
+    </div>
+
+    <div>
+    Total Debit
+    <b>₹{{ "%.2f"|format(total_debit) }}</b>
+</div>
+
+    <div>
+        Recurring Amount
+        <b>₹{{ dashboard.get("monthly_cost", 0) }}</b>
+    </div>
+</div>
+    <div class="dark-data-table">
+
+    <div class="data-head">
+        Date　 Description　 Merchant　 Category　 Amount　 Type
+    </div>
+
+    {% for tx in transactions %}
+
+    <div class="data-line">
+
+        {{ tx.date }}
+
+        {{ tx.merchant }}
+
+        {{ tx.merchant }}
+
+        --
+
+        <b>₹{{ "%.2f"|format(tx.amount) }}</b>
+
+        <i>{{ tx.type }}</i>
+
+    </div>
+
+    {% endfor %}
+
+</div>
   {% elif page == 'price_changes' %}
-    <div class="feature-tabs"><button class="active">All (5)</button><button>This Month (3)</button><button>Last 3 Months (5)</button></div><div class="dark-data-table"><div class="data-head">Subscription　 Previous　 Current　 Change　 Since　 Impact</div>{% for row in [('Netflix','₹499','₹649','+30%','May 2025','₹150/month'),('Amazon Prime','₹249','₹299','+20%','May 2025','₹50/month'),('Disney+ Hotstar','₹199','₹299','+50%','Apr 2025','₹100/month'),('YouTube Premium','₹129','₹139','+8%','May 2025','₹10/month'),('Spotify Premium','₹99','₹119','+20%','May 2025','₹20/month')] %}<div class="data-line price-line">🔺 {{ row[0] }}　 {{ row[1] }}　 {{ row[2] }}　 <em>{{ row[3] }}</em>　 {{ row[4] }}　 {{ row[5] }}</div>{% endfor %}</div><div class="feature-callout">🔺 You've been paying ₹900 more every month due to price hikes.<button>Review Now</button></div>
-  {% elif page == 'unused' %}
-    <div class="dark-data-table"><div class="data-head">Subscription　 Amount　 Billing Cycle　 Unused For　 Impact　 Action</div>{% for row in [('Adobe CC','₹1,675','Monthly','42 months','₹1,675/month'),('YouTube Premium','₹139','Monthly','3+ months','₹139/month'),('Hotstar Premium','₹299','Monthly','2+ months','₹299/month'),('Zee5 Premium','₹149','Monthly','2+ months','₹149/month')] %}<div class="data-line">🔺 {{ row[0] }}　 {{ row[1] }}　 {{ row[2] }}　 {{ row[3] }}　 <b>{{ row[4] }}</b>　 <button class="red-action">Cancel</button></div>{% endfor %}</div><div class="feature-callout saving-callout">🐷 You could save ₹2,262 every month by cancelling unused subscriptions.<small>That's ₹27,144 per year!</small></div>
+    <div class="feature-tabs"><button class="active">All (5)</button><button>This Month (3)</button><button>Last 3 Months (5)</button></div>
+    <div class="dark-data-table">
+      <div class="data-head">Subscription　 Previous　 Current　 Change　 Since　 Impact</div>
+      {% for sub in price_changes %}
+
+<div class="data-line price-line">
+
+🔺
+
+{{ sub.merchant }}
+
+₹{{ "%.2f"|format(sub.previous_amount) }}
+
+₹{{ "%.2f"|format(sub.amount) }}
+
+<em>+{{ sub.change_percent }}%</em>
+
+{{ sub.last_payment }}
+
+₹{{ "%.2f"|format(sub.price_increase) }}
+
+</div>
+
+{% endfor %}
+      </div><div class="feature-callout">🔺 You've been paying ₹900 more every month due to price hikes.<button>Review Now</button></div>
+ {% elif page == 'unused' %}
+
+<div class="stat-strip">
+
+    <div>
+        Unused Subscriptions
+        <b>{{ unused_subscriptions|length }}</b>
+    </div>
+
+    <div>
+        Potential Monthly Savings
+        <b>₹{{ "%.2f"|format(total_unused_savings) }}</b>
+    </div>
+
+</div>
+
+
+<div class="dark-data-table">
+
+    <div class="data-head">
+        Subscription　
+        Amount　
+        Billing Cycle　
+        Last Payment　
+        Status　
+        Action
+    </div>
+
+    {% for sub in unused_subscriptions %}
+
+    <div class="data-line">
+
+        {{ sub.merchant }}
+
+        ₹{{ "%.2f"|format(sub.amount) }}
+
+        {{ sub.frequency }}
+
+        {{ sub.last_payment }}
+
+        <b>{{ sub.status }}</b>
+
+        <button class="red-action">
+            Cancel
+        </button>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+
+<div class="feature-callout saving-callout">
+
+🐷 You could save
+
+<b>₹{{ "%.2f"|format(total_unused_savings) }}</b>
+
+every month.
+
+<small>
+
+That's
+₹{{ "%.2f"|format(total_unused_savings*12) }}
+per year!
+
+</small>
+
+</div>
   {% elif page == 'alerts' %}
-    <div class="feature-tabs"><button class="active">All (8)</button><button>Price Hikes</button><button>Unused</button><button>Payments</button><button>General</button></div><div class="alerts-board">{% for row in [('🔺','Price increase detected for Netflix','Netflix amount: ₹649 (+₹150)','3d ago'),('⚠','Unused subscription detected','YouTube Premium hasn’t been used in 90+ days','2d ago'),('₹','Potential savings available','You could save ₹2,143 this month','4d ago'),('●','Payment failed for Spotify Premium','Please update your payment method','5d ago')] %}<article><b>{{ row[0] }}</b><div><strong>{{ row[1] }}</strong><p>{{ row[2] }}</p></div><small>{{ row[3] }}</small></article>{% endfor %}</div>
+    <div class="feature-tabs"><button class="active">All (8)</button><button>Price Hikes</button><button>Unused</button><button>Payments</button><button>General</button></div>
+    <div class="alerts-board">
+
+{% if alerts %}
+
+    {% for alert in alerts %}
+
+    <article>
+
+        <b>{{ alert.icon }}</b>
+
+        <div>
+
+            <strong>{{ alert.title }}</strong>
+
+            <p>{{ alert.message }}</p>
+
+        </div>
+
+        <small>{{ alert.time }}</small>
+
+    </article>
+
+    {% endfor %}
+
+{% else %}
+
+    <article>
+
+        <b>✅</b>
+
+        <div>
+
+            <strong>No Alerts</strong>
+
+            <p>Your subscriptions look healthy.</p>
+
+        </div>
+
+        <small>Now</small>
+
+    </article>
+
+{% endif %}
+
+</div>
   {% elif page == 'reports' %}
-    <div class="feature-tabs"><button class="active">Spending Overview</button><button>Savings Report</button><button>Subscription Report</button><span>May 1 - May 31, 2025</span></div><div class="report-stats"><div>Total Spend<b>₹6,842</b></div><div>Total Savings<b>₹2,743</b></div><div>Active Subscriptions<b>11</b></div><div>Unused Subscriptions<b>4</b></div></div><div class="report-charts"><article><h2>Spending Over Time</h2><div class="line-chart">╱╲╱╲╱╲╱╲╱╲</div></article><article><h2>Top Categories</h2><div class="report-donut">₹6,842<small>Total Spend</small></div></article></div>
+
+<div class="feature-tabs">
+
+<button class="active">
+    Spending Overview
+</button>
+
+<button>
+    Savings Report
+</button>
+
+<button>
+    Subscription Report
+</button>
+
+<span>
+    AI Analysis
+</span>
+
+</div>
+
+
+<!-- SUMMARY CARDS -->
+
+<div class="report-dashboard-grid">
+
+
+<div class="report-card">
+
+<h3>
+💸 Monthly Spend
+</h3>
+
+<strong>
+₹{{ "%.2f"|format(total_spend) }}
+</strong>
+
+</div>
+
+
+
+<div class="report-card">
+
+<h3>
+💰 Savings Opportunity
+</h3>
+
+<strong>
+₹{{ "%.2f"|format(total_savings) }}
+</strong>
+
+</div>
+
+
+
+<div class="report-card">
+
+<h3>
+💳 Active Subscriptions
+</h3>
+
+<strong>
+{{ active_subscriptions }}
+</strong>
+
+</div>
+
+
+
+<div class="report-card">
+
+<h3>
+🛡 Leak Score
+</h3>
+
+<strong>
+{{ leak_score }}/100
+</strong>
+
+<small>
+Risk: {{ risk_level }}
+</small>
+
+</div>
+
+
+</div>
+
+
+
+<!-- CHART SECTION -->
+
+<div class="report-visual-grid">
+
+
+<div class="chart-box">
+
+<h2>
+📊 Category Spending
+</h2>
+
+
+<canvas id="categoryChart"></canvas>
+
+
+</div>
+
+
+
+
+<div class="chart-box">
+
+<h2>
+📈 Subscription Frequency
+</h2>
+
+
+<canvas id="frequencyChart"></canvas>
+
+
+</div>
+
+<div class="chart-box">
+
+<h2>
+📈 Monthly Spending Trend
+</h2>
+
+<canvas id="monthlyChart"></canvas>
+
+</div>
+
+
+</div>
+
+
+
+
+
+<!-- TOP SUBSCRIPTIONS -->
+
+
+<!-- TOP EXPENSIVE SUBSCRIPTIONS -->
+
+
+<div class="subscription-ranking">
+
+
+<h2>
+🥇 Top Expensive Subscriptions
+</h2>
+
+
+
+{% for sub in top_expensive %}
+
+
+<div class="premium-sub-card">
+
+
+<div class="rank">
+
+{% if loop.index == 1 %}
+🥇
+{% elif loop.index == 2 %}
+🥈
+{% elif loop.index == 3 %}
+🥉
+{% else %}
+#{{loop.index}}
+{% endif %}
+
+</div>
+
+
+<div class="sub-info">
+
+<h3>
+{{sub.merchant}}
+</h3>
+
+
+<p>
+{{sub.frequency}}
+subscription
+</p>
+
+
+</div>
+
+
+
+<div class="sub-price">
+
+₹{{"%.2f"|format(sub.amount)}}
+
+<span>
+/month
+</span>
+
+
+</div>
+
+
+</div>
+
+
+{% endfor %}
+
+
+
+</div>
+
+
+
+
+
+<!-- SAVINGS GAUGE -->
+
+
+<div class="chart-box savings-gauge">
+
+
+<h2>
+💰 Savings Gauge
+</h2>
+
+
+
+<div class="savings-gauge">
+
+
+<h2>
+💰 Savings Potential
+</h2>
+
+
+<div class="gauge">
+
+
+<svg>
+
+<circle
+class="gauge-bg"
+cx="80"
+cy="80"
+r="70"
+/>
+
+
+<circle
+class="gauge-progress"
+cx="80"
+cy="80"
+r="70"
+/>
+
+
+</svg>
+
+
+
+<div class="gauge-value">
+
+
+{{ 
+((total_savings / total_spend * 100)
+if total_spend > 0 else 0)
+|round
+}}%
+
+
+</div>
+
+
+</div>
+
+
+
+<p>
+
+Potential yearly saving:
+
+<br>
+
+<b>
+₹{{"%.2f"|format(yearly_savings)}}
+</b>
+
+
+</p>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+<!-- AI SUMMARY -->
+
+
+<div class="ai-summary-card">
+
+
+<h2>
+🤖 AI Financial Summary
+</h2>
+
+
+<p>
+
+Your current subscription spending is
+
+<b>
+₹{{ "%.2f"|format(total_spend) }}
+</b>
+
+per month.
+
+</p>
+
+
+
+<p>
+
+You can potentially save
+
+<b>
+₹{{ "%.2f"|format(total_savings) }}
+</b>
+
+every month by optimizing subscriptions.
+
+</p>
+
+
+
+{% if ai_summary %}
+
+
+<p>
+
+Leak Score:
+<b>
+{{ ai_summary["Leak Score"] }}
+</b>
+
+</p>
+
+
+<p>
+
+Unused subscriptions detected:
+
+<b>
+{{ ai_summary["Unused Subscriptions"] }}
+
+</b>
+
+</p>
+
+
+{% endif %}
+
+
+</div>
+
+
+
+
+<!-- CHART DATA -->
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+
+const categoryData = {{ category_spending | tojson }};
+
+
+new Chart(
+document.getElementById("categoryChart"),
+{
+
+animation:{
+    duration:1500,
+    easing:"easeOutQuart"
+},
+type:"pie",
+
+data:{
+
+
+labels:Object.keys(categoryData),
+
+
+datasets:[{
+
+data:Object.values(categoryData)
+
+}]
+
+
+}
+
+
+});
+
+const monthlyData =
+{{ monthly_spending | tojson }};
+
+
+new Chart(
+document.getElementById("monthlyChart"),
+{
+
+type:"line",
+
+data:{
+
+labels:Object.keys(monthlyData),
+
+datasets:[{
+
+label:"Monthly Spending",
+
+data:Object.values(monthlyData),
+
+tension:0.4,
+
+fill:true
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+
+legend:{
+display:true
+}
+
+}
+
+}
+
+});
+
+
+
+
+
+const frequencyData = {{ statistics | tojson }};
+
+
+new Chart(
+
+document.getElementById("frequencyChart"),
+
+{
+
+type:"doughnut",
+
+data:{
+
+
+labels:Object.keys(frequencyData),
+
+
+datasets:[{
+
+data:Object.values(frequencyData)
+
+}]
+
+
+}
+
+
+});
+
+
+</script>
+
+
+    
   {% elif page == 'data_sources' %}
     <div class="sources-list">{% for row in [('▣','Bank Statements','2 accounts','Last synced: May 29, 2025, 9:24 AM'),('✉','SMS Alerts','Connected','Last synced: May 29, 2025, 8:38 AM'),('▣','Email Inbox','Connected','Last synced: May 29, 2025, 8:42 AM')] %}<article><b>{{ row[0] }}</b><div><strong>{{ row[1] }}</strong><p>{{ row[2] }}</p></div><small>{{ row[3] }}</small><i>● Connected　›</i></article>{% endfor %}</div><div class="feature-callout data-callout"><b>How it works?</b><p>We securely scan your data to detect recurring payments and subscriptions.</p><button>Learn More</button></div>
   {% else %}

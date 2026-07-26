@@ -1,3 +1,27 @@
+# Environment variables
 .env
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# VS Code
+.vscode/
+
+# Uploads
+uploads/
+
+# Generated reports and charts
+*.pdf
+*.png
+
+# OS files
+Thumbs.db
+.DS_Store

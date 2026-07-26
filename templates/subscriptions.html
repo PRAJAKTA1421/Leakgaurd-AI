@@ -6,18 +6,203 @@
 <main class="subscriptions-page">
   <header class="subscriptions-header"><h1>Subscriptions</h1><p>Manage and review all your subscriptions.</p></header>
   <section class="subscriptions-workspace">
-    <div class="subscriptions-toolbar"><div class="subscription-filters"><button class="is-active">All (18)</button><button>Active (11)</button><button>At Risk (7)</button><button>Unused (4)</button></div><div class="subscription-search">Search subscription... <span>⌕</span></div><button class="filter-button" aria-label="Filter">⚑</button></div>
+    <div class="subscriptions-toolbar">
+      <div class="subscription-filters">
+
+    <button id="filter-all" class="is-active">
+        All ({{ subscriptions|length }})
+    </button>
+
+    <button id="filter-active">
+        Active
+    </button>
+
+    <button id="filter-price">
+        Price Hikes ({{ dashboard.price_increases }})
+    </button>
+
+    <button id="filter-unused">
+        Unused ({{ dashboard.unused_subscriptions }})
+    </button>
+
+</div>
+    <div class="subscription-search">
+
+    <input
+        type="text"
+        id="subscriptionSearch"
+        placeholder="Search subscriptions..."
+    >
+
+    <span>⌕</span>
+
+</div>
+    <button class="filter-button" aria-label="Filter">⚑</button></div>
     <div class="full-subscription-table">
       <div class="full-row full-table-head"><span>Subscription</span><span>Category</span><span>Amount</span><span>Billing Cycle</span><span>Next Billing</span><span>Status</span><span>Action</span></div>
-      <div class="full-row"><span><b class="service netflix">N</b><strong>Netflix</strong><small>netflix.com</small></span><span>Entertainment</span><span><strong>₹649</strong><small class="up">+₹150 ↑</small></span><span>Monthly</span><span>May 30, 2025<small>In 2 days</small></span><span><mark class="price">Price Hike</mark></span><button>Review</button></div>
-      <div class="full-row"><span><b class="service spotify">≋</b><strong>Spotify Premium</strong><small>spotify.com</small></span><span>Music</span><span><strong>₹119</strong></span><span>Monthly</span><span>May 30, 2025<small>In 2 days</small></span><span><mark class="active-status">Active</mark></span><button>Review</button></div>
-      <div class="full-row"><span><b class="service prime">a</b><strong>Amazon Prime</strong><small>amazon.in</small></span><span>Shopping</span><span><strong>₹299</strong><small class="up">+₹50 ↑</small></span><span>Monthly</span><span>May 31, 2025<small>In 3 days</small></span><span><mark class="price">Price Hike</mark></span><button>Review</button></div>
-      <div class="full-row"><span><b class="service adobe">A</b><strong>Adobe CC</strong><small>adobe.com</small></span><span>Productivity</span><span><strong>₹1,675</strong></span><span>Monthly</span><span>May 30, 2025<small>In 2 days</small></span><span><mark class="unused">Unused</mark></span><button class="cancel">Cancel</button></div>
-      <div class="full-row"><span><b class="service swiggy">●</b><strong>Swiggy One</strong><small>swiggy.com</small></span><span>Food</span><span><strong>₹99</strong></span><span>Quarterly</span><span>Jun 15, 2025<small>In 18 days</small></span><span><mark class="active-status">Active</mark></span><button>Review</button></div>
-      <div class="full-row"><span><b class="service youtube">▶</b><strong>YouTube Premium</strong><small>youtube.com</small></span><span>Entertainment</span><span><strong>₹139</strong></span><span>Monthly</span><span>May 10, 2025<small>In 13 days</small></span><span><mark class="unused">Unused</mark></span><button class="cancel">Cancel</button></div>
-      <div class="full-row"><span><b class="service google">G</b><strong>Google One 100GB</strong><small>one.google.com</small></span><span>Utilities</span><span><strong>₹130</strong><small class="up">+₹20 ↑</small></span><span>Monthly</span><span>May 8, 2025<small>In 10 days</small></span><span><mark class="price">Price Hike</mark></span><button>Review</button></div>
+      {% for sub in subscriptions %}
+
+<div class="full-row"
+     data-merchant="{{ sub.merchant|lower }}"
+     data-category="{{ sub.category|lower }}"
+     data-status="{{ sub.status|lower }}"
+     data-price="{{ sub.price_changed|string|lower }}"
+     data-amount="{{ sub.amount }}">
+
+    <span>
+        <b class="service">
+            {{ sub.merchant[0] }}
+        </b>
+
+        <strong>{{ sub.merchant }}</strong>
+
+        <small>{{ sub.merchant|lower }}</small>
+    </span>
+
+    <span>{{ sub.category }}</span>
+
+    <span>
+        <strong>₹{{ "%.2f"|format(sub.amount) }}</strong>
+
+        {% if sub.price_changed %}
+        <small class="up">
+            +₹{{ "%.2f"|format(sub.price_increase) }} ↑
+        </small>
+        {% endif %}
+    </span>
+
+    <span>{{ sub.frequency }}</span>
+
+    <span>{{ sub.last_payment }}</span>
+
+    <span>
+
+        {% if sub.price_changed %}
+            <mark class="price">Price Hike</mark>
+
+        {% elif sub.status == "Unused" %}
+            <mark class="unused">Unused</mark>
+
+        {% else %}
+            <mark class="active-status">Active</mark>
+
+        {% endif %}
+
+    </span>
+
+    <a href="{{ url_for('subscription_details', merchant=sub.merchant) }}">
+        <button type="button">Review</button>
+    </a>
+
+</div>
+
+{% endfor %}
     </div>
   </section>
 </main>
 </section>
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("subscriptionSearch");
+
+    const rows = document.querySelectorAll(".full-row:not(.full-table-head)");
+
+    // -------------------------
+    // SEARCH
+    // -------------------------
+
+    searchInput.addEventListener("keyup", function () {
+
+        const searchValue = this.value.trim().toLowerCase();
+
+        rows.forEach(row => {
+
+            const merchant = row.dataset.merchant;
+
+            const category = row.dataset.category;
+
+            if (
+                merchant.includes(searchValue) ||
+                category.includes(searchValue)
+            ) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+
+        });
+
+    });
+
+    // ===================================
+    // ADD STEP 3 HERE
+    // ===================================
+
+    const filterButtons = document.querySelectorAll(".subscription-filters button");
+
+    function setActiveButton(button) {
+        filterButtons.forEach(btn => btn.classList.remove("is-active"));
+        button.classList.add("is-active");
+    }
+
+    document.getElementById("filter-all").addEventListener("click", function () {
+
+        setActiveButton(this);
+
+        rows.forEach(row => {
+            row.style.display = "";
+        });
+
+    });
+
+    document.getElementById("filter-active").addEventListener("click", function () {
+
+        setActiveButton(this);
+
+        rows.forEach(row => {
+
+            row.style.display =
+                row.dataset.status === "active"
+                    ? ""
+                    : "none";
+
+        });
+
+    });
+
+    document.getElementById("filter-price").addEventListener("click", function () {
+
+        setActiveButton(this);
+
+        rows.forEach(row => {
+
+            row.style.display =
+                row.dataset.price === "true"
+                    ? ""
+                    : "none";
+
+        });
+
+    });
+
+    document.getElementById("filter-unused").addEventListener("click", function () {
+
+        setActiveButton(this);
+
+        rows.forEach(row => {
+
+            row.style.display =
+                row.dataset.status === "unused"
+                    ? ""
+                    : "none";
+
+        });
+
+    });
+
+});
+
+</script>
 {% endblock %}

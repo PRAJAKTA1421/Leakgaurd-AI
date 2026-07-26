@@ -16,43 +16,364 @@
     </nav>
     <a href="{{ url_for('logout') }}" class="sidebar-logout dashboard-logout-near-settings">⬅️ <span>Logout</span></a>
     <div class="savings-mini-card">
-      <span>Total Potential Savings</span><strong>₹2,743</strong><small>₹32,916 per year</small><b>●</b>
+      <span>Total Potential Savings</span>
+
+      <strong>
+      ₹{{ dashboard.monthly_savings }}
+      </strong>
+
+      <small>
+      ₹{{ dashboard.yearly_savings }} per year
+      </small>
+      
+      <b>●</b>
     </div>
     <div class="data-sources-mini"><strong>Data Sources Connected</strong><p>▣ Bank Statements <i>●</i></p><p>✉ SMS Alerts <i>●</i></p><p>▣ Email Inbox <i>●</i></p><button>Manage Data Sources</button></div>
     <a href="{{ url_for('login') }}" class="sidebar-logout">⇥ <span>Logout</span></a>
   </aside>
 
   <main class="dashboard-main">
-    <div class="dashboard-main-heading"><h1>Dashboard <span aria-hidden="true">👋</span></h1><p>Here's what we found in your spending.</p></div>
-    <div class="dashboard-date">May 1 - May 31, 2025&nbsp;&nbsp; ◫</div>
+    <div class="dashboard-main-heading"><h1>Dashboard <span aria-hidden="true">👋</span></h1>
+      {% if dashboard.total_subscriptions %}
+
+<p>
+    We detected {{ dashboard.total_subscriptions }}
+    recurring subscriptions from your uploaded statement.
+</p>
+
+{% else %}
+
+<p>
+    Upload a bank statement to begin analysis.
+</p>
+
+{% endif %}
+    
+    </div>
+    <div class="dashboard-date">
+
+Current Analysis
+
+</div>
     <section class="metrics-grid">
-      <article class="metric-card leak-score"><span>Leak Score　ⓘ</span><div class="score-ring"><b>72</b><small>/100</small></div><strong>⚠ High Leak Risk</strong><small>You are losing more than you think.</small></article>
-      <article class="metric-card"><span class="metric-title blue">▣　Total Monthly Spend</span><b>₹6,842</b><small>Across 18 subscriptions</small><em class="spark spark-purple">╱╲╱╲╱╲╱</em></article>
-      <article class="metric-card"><span class="metric-title green">₹　Potential Monthly Savings</span><b>₹2,743</b><small>From 9 subscriptions</small><em class="spark spark-green">╱╲╱╲╱╲</em></article>
-      <article class="metric-card"><span class="metric-title orange">⊘　Unused Subscriptions</span><b>₹1,523</b><small>From 4 subscriptions</small><em class="spark spark-orange">╱╲╱╲╱╲</em></article>
-      <article class="metric-card"><span class="metric-title red">▣　Price Increase Detected</span><b>₹1,220</b><small>Across 3 subscriptions</small><em class="spark spark-red">╱╲╱╲╱╲</em></article>
+      <article class="metric-card leak-score"style="border-top:6px solid {{ dashboard.risk_color }}"
+>
+        <span>Leak Score　ⓘ</span>
+        <div class="score-ring">
+            <b>{{ dashboard.leak_score }}</b>
+            <small>/100</small>
+        </div>
+
+        <strong>
+        {{ dashboard.risk_level }} Risk
+        </strong>
+
+        <small>
+        Potential Savings ₹{{ dashboard.monthly_savings }}/month
+        </small>
+      </article>
+      <article class="metric-card"><span class="metric-title blue">▣　Total Monthly Spend</span>
+        <b>₹{{ dashboard.monthly_cost }}</b>
+
+        <small>
+         Across {{ dashboard.total_subscriptions }} subscriptions
+        </small>
+        <em class="spark spark-purple">╱╲╱╲╱╲╱</em></article>
+      <article class="metric-card"><span class="metric-title green">₹　Potential Monthly Savings</span>
+
+        <b>₹{{ dashboard.monthly_savings }}</b>
+
+        <small>
+        ₹{{ dashboard.yearly_savings }} per year
+        </small>
+        
+        <em class="spark spark-green">╱╲╱╲╱╲</em></article>
+      <article class="metric-card"><span class="metric-title orange">⊘　Unused Subscriptions</span>
+        
+        <b>{{ dashboard.unused_subscriptions }}</b>
+
+        <small>
+        Unused subscriptions
+        </small>
+        
+        <em class="spark spark-orange">╱╲╱╲╱╲</em></article>
+      <article class="metric-card"><span class="metric-title red">▣　Price Increase Detected</span>
+
+        <b>{{ dashboard.price_increases }}</b>
+
+        <small>
+        Subscriptions with price hikes
+        </small>
+        
+        <em class="spark spark-red">╱╲╱╲╱╲</em></article>
     </section>
 
     <section class="dashboard-content-grid">
       <article class="subscriptions-card" id="subscriptions">
-        <header><div><h2>Your Subscriptions</h2><div class="filter-tabs"><button class="selected">All (18)</button><button>At Risk (7)</button><button>Price Hike (5)</button><button>Unused (4)</button></div></div><div class="search-box">Search subscription...　⌕</div></header>
+        <header><div><h2>Your Subscriptions</h2><div class="filter-tabs"><button class="selected">All ({{ subscriptions|length }})</button>
+          <button>At Risk (7)</button>
+          <button>Price Hikes ({{ dashboard.price_increases }})</button>
+          <button>Unused ({{ dashboard.unused_subscriptions }})</button>
+        </div></div><div class="search-box">Search subscription...　⌕</div></header>
         <div class="subscription-table">
           <div class="table-row table-head"><span>Subscription</span><span>Category</span><span>Amount</span><span>Billing Cycle</span><span>Status</span><span>Leak Impact</span><span>Action</span></div>
-          <div class="table-row"><span><b class="service netflix">N</b> Netflix <small>netflix.com</small></span><span>Entertainment</span><span>₹649 <i class="up">+₹150 ↑</i></span><span>Monthly <small>Since Jan 2024</small></span><span><mark class="price">Price Hike</mark></span><span class="high">High <small>₹150/month</small></span><button>Review</button></div>
-          <div class="table-row"><span><b class="service spotify">≋</b> Spotify Premium <small>spotify.com</small></span><span>Music</span><span>₹119</span><span>Monthly <small>Since Aug 2023</small></span><span><mark class="active-status">Active</mark></span><span class="low">Low <small>₹0/month</small></span><button>Review</button></div>
-          <div class="table-row"><span><b class="service prime">a</b> Amazon Prime <small>amazon.in</small></span><span>Shopping</span><span>₹299 <i class="up">+₹50 ↑</i></span><span>Monthly <small>Since May 2023</small></span><span><mark class="price">Price Hike</mark></span><span class="medium">Medium <small>₹50/month</small></span><button>Review</button></div>
-          <div class="table-row"><span><b class="service adobe">A</b> Adobe CC <small>adobe.com</small></span><span>Productivity</span><span>₹1,675 <i class="up">+₹75 ↑</i></span><span>Monthly <small>Since Feb 2024</small></span><span><mark class="unused">Unused</mark></span><span class="high">High <small>₹1,675/month</small></span><button class="cancel">Cancel</button></div>
-          <div class="table-row"><span><b class="service swiggy">●</b> Swiggy One <small>swiggy.com</small></span><span>Food</span><span>₹99</span><span>Quarterly <small>Since Jul 2025</small></span><span><mark class="active-status">Active</mark></span><span class="low">Low <small>₹0/month</small></span><button>Review</button></div>
-          <div class="table-row"><span><b class="service youtube">▶</b> YouTube Premium <small>youtube.com</small></span><span>Entertainment</span><span>₹139</span><span>Monthly <small>Since May 2025</small></span><span><mark class="unused">Unused</mark></span><span class="medium">Medium <small>₹139/month</small></span><button class="cancel">Cancel</button></div>
-        </div><footer>Showing 1 to 7 of 18 subscriptions <button>View All Subscriptions</button></footer>
+
+          {% if subscriptions %}
+
+    {% for sub in subscriptions %}
+
+    <div class="table-row">
+
+        <span>
+            <b class="service">
+                {{ sub.merchant[0] }}
+            </b>
+
+            {{ sub.merchant }}
+        </span>
+
+        <span>
+
+            {% if "Netflix" in sub.merchant %}
+                Entertainment
+            {% elif "Prime" in sub.merchant %}
+                Shopping
+            {% elif "Spotify" in sub.merchant or "Apple Music" in sub.merchant %}
+                Music
+            {% elif "Google" in sub.merchant %}
+                Cloud Storage
+            {% elif "Adobe" in sub.merchant %}
+                Design
+            {% elif "Microsoft" in sub.merchant %}
+                Productivity
+            {% else %}
+                Others
+            {% endif %}
+
+        </span>
+
+        <span>
+            ₹{{ sub.amount }}
+
+            {% if sub.price_changed %}
+                <i class="up">
+                    +₹{{ sub.price_increase }} ↑
+                </i>
+            {% endif %}
+        </span>
+
+        <span>
+            {{ sub.frequency }}
+            <small>Since {{ sub.first_payment }}</small>
+        </span>
+
+        <span>
+
+            {% if sub.price_changed %}
+                <mark class="price">Price Increased</mark>
+
+            {% elif sub.status == "Inactive" %}
+                <mark class="unused">Unused</mark>
+
+            {% else %}
+                <mark class="active-status">Active</mark>
+
+            {% endif %}
+
+        </span>
+
+        <span>
+
+            {% if sub.price_increase > 300 %}
+                <span class="high">
+                    High
+                    <small>₹{{ sub.price_increase }}/month</small>
+                </span>
+
+            {% elif sub.price_increase > 0 %}
+                <span class="medium">
+                    Medium
+                    <small>₹{{ sub.price_increase }}/month</small>
+                </span>
+
+            {% else %}
+                <span class="low">
+                    Low
+                    <small>₹0/month</small>
+                </span>
+
+            {% endif %}
+
+        </span>
+
+        <button class="review-btn">Review</button>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<div class="table-row">
+    <span style="grid-column:1 / -1; text-align:center; padding:30px;">
+        📄 No subscriptions found.<br>
+        Upload a bank statement to analyze recurring payments.
+    </span>
+</div>
+
+{% endif %}
+
+        </div>
+        <footer>
+
+Showing
+
+<strong>{{ subscriptions|length }}</strong>
+
+subscriptions
+
+</footer>
       </article>
 
       <aside class="insights-column">
-        <article class="insight-card"><h2>Spending by Category</h2><div class="donut-wrap"><div class="donut"><b>₹6,842</b><small>Total Spend</small></div><ul><li>● Entertainment　₹2,156 (31%)</li><li>● Shopping　₹1,594 (23%)</li><li>● Productivity　₹1,245 (18%)</li><li>● Food　₹924 (14%)</li><li>● Utilities　₹553 (8%)</li></ul></div></article>
-        <article class="insight-card"><h2>Top Unused Subscriptions <a href="#">View All</a></h2><div class="mini-list"><p>🔺 Adobe Creative Cloud <span>₹1,675/month<br><button>Cancel</button></span></p><p>▣ YouTube Premium <span>₹139/month<br><button>Cancel</button></span></p><p>◉ Hotstar Premium <span>₹299/month<br><button>Cancel</button></span></p><p>◉ Zee5 Premium <span>₹149/month<br><button>Cancel</button></span></p></div></article>
-        <article class="insight-card" id="alerts"><h2>Recent Alerts <a href="#">View All</a></h2><div class="alerts-list"><p>⌁ Price increase detected for Netflix <small>2d ago</small></p><p>⚠ Unused subscription detected <small>3d ago</small></p></div></article>
+        <article class="insight-card">
+
+    <h2>Spending by Category</h2>
+
+    <div class="donut-wrap">
+
+        <div class="donut">
+
+            <b>₹{{ dashboard.monthly_cost }}</b>
+
+            <small>Total Spend</small>
+
+        </div>
+
+        <ul>
+
+            {% for category, amount in category_spending.items() %}
+
+            <li>
+
+                ● {{ category }}
+
+                ₹{{ amount }}
+
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+    </div>
+
+</article>
+
+       <article class="insight-card">
+
+    <h2>
+        Top Costly Subscriptions
+        <a href="#">View All</a>
+    </h2>
+
+    <div class="mini-list">
+
+        {% for sub in subscriptions[:4] %}
+
+        <p>
+
+            🔺 {{ sub.merchant }}
+
+            <span>
+
+                ₹{{ sub.amount }}/{{ sub.frequency }}
+
+                <br>
+
+                {% if sub.price_changed %}
+                    <button>Review</button>
+                {% else %}
+                    <button>Manage</button>
+                {% endif %}
+
+            </span>
+
+        </p>
+
+        {% endfor %}
+
+    </div>
+
+</article>
+
+        <article class="insight-card" id="alerts">
+
+    <h2>
+        Recent Alerts
+        <a href="#">View All</a>
+    </h2>
+
+    <div class="alerts-list">
+
+        <!-- Price Increase Alerts -->
+        {% for sub in subscriptions %}
+            {% if sub.price_changed %}
+                <p>
+                    📈 Price increase detected for
+                    <strong>{{ sub.merchant }}</strong>
+
+                    <small>
+                        +₹{{ sub.price_increase }}
+                    </small>
+                </p>
+            {% endif %}
+        {% endfor %}
+
+        <!-- AI Recommendations -->
+        {% for rec in recommendations %}
+            <p>
+                💡 {{ rec }}
+            </p>
+        {% endfor %}
+
+        {% set has_alert = false %}
+
+<!-- Price Increase Alerts -->
+{% for sub in subscriptions %}
+    {% if sub.price_changed %}
+        {% set has_alert = true %}
+        <p>
+            📈 Price increase detected for
+            <strong>{{ sub.merchant }}</strong>
+
+            <small>
+                +₹{{ sub.price_increase }}
+            </small>
+        </p>
+    {% endif %}
+{% endfor %}
+
+<!-- AI Recommendations -->
+{% if recommendations %}
+    {% set has_alert = true %}
+
+    {% for rec in recommendations %}
+        <p>💡 {{ rec }}</p>
+    {% endfor %}
+{% endif %}
+
+{% if not has_alert %}
+    <p>✅ No alerts available.</p>
+{% endif %}
+
+    </div>
+
+</article>
       </aside>
     </section>
-  </main>
+    ...
+    </section>
+</main>
 </section>
 {% endblock %}

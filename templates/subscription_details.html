@@ -1,0 +1,266 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ subscription.merchant }} | LeakGuard AI{% endblock %}
+
+{% block content %}
+
+<div class="subscription-details-page">
+
+    <!-- Header -->
+    <div class="details-header">
+
+        <a href="{{ url_for('subscriptions') }}" class="back-btn">
+            ← Back to Subscriptions
+        </a>
+
+        <div class="hero">
+
+            <div class="hero-left">
+
+                <div class="merchant-icon">
+                    {{ subscription.merchant[0] }}
+                </div>
+
+                <div>
+
+                    <h1>{{ subscription.merchant }}</h1>
+
+                    <p>{{ subscription.category }}</p>
+
+                </div>
+
+            </div>
+
+            <div class="hero-right">
+
+                <h2>₹{{ "%.2f"|format(subscription.amount) }}</h2>
+
+                <span class="billing-pill">
+                    {{ subscription.frequency }}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Cards -->
+    <div class="details-grid">
+
+        <!-- Summary -->
+
+        <div class="detail-card">
+
+            <h3>📊 Subscription Summary</h3>
+
+            <div class="detail-row">
+                <span>Merchant</span>
+                <strong>{{ subscription.merchant }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Category</span>
+                <strong>{{ subscription.category }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Status</span>
+
+                {% if subscription.status == "Unused" %}
+
+                    <span class="status unused">
+                        Unused
+                    </span>
+
+                {% else %}
+
+                    <span class="status active">
+                        Active
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+            <div class="detail-row">
+                <span>Billing Cycle</span>
+                <strong>{{ subscription.frequency }}</strong>
+            </div>
+
+            <div class="detail-row">
+
+                <span>Risk</span>
+
+                {% if subscription.amount > 1000 %}
+
+                    <span class="risk high">
+                        High
+                    </span>
+
+                {% elif subscription.price_changed %}
+
+                    <span class="risk medium">
+                        Medium
+                    </span>
+
+                {% else %}
+
+                    <span class="risk low">
+                        Low
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <!-- Billing -->
+
+        <div class="detail-card">
+
+            <h3>💳 Billing Information</h3>
+
+            <div class="detail-row">
+                <span>First Payment</span>
+                <strong>{{ subscription.first_payment }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Latest Payment</span>
+                <strong>{{ subscription.last_payment }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Next Billing</span>
+                <strong>{{ subscription.next_billing }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Total Payments</span>
+                <strong>{{ subscription.payments }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Total Paid</span>
+                <strong>₹{{ "%.2f"|format(subscription.total_paid) }}</strong>
+            </div>
+
+        </div>
+
+        <!-- Price Analysis -->
+
+        <div class="detail-card">
+
+            <h3>📈 Price Analysis</h3>
+
+            <div class="detail-row">
+                <span>Current Price</span>
+                <strong>₹{{ "%.2f"|format(subscription.amount) }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Previous Price</span>
+                <strong>₹{{ "%.2f"|format(subscription.previous_price) }}</strong>
+            </div>
+
+            {% if subscription.price_changed %}
+
+                <div class="price-alert">
+
+                    Price increased by
+
+                    <strong>
+                        ₹{{ "%.2f"|format(subscription.price_increase) }}
+                    </strong>
+
+                </div>
+
+            {% else %}
+
+                <div class="price-ok">
+
+                    No recent price increase detected.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <!-- AI Recommendation -->
+
+        <div class="detail-card">
+
+            <h3>🤖 AI Financial Advisor</h3>
+
+            <ul class="ai-list">
+
+                {% if subscription.price_changed %}
+
+                    <li>
+                        Review the recent price increase.
+                    </li>
+
+                {% endif %}
+
+                {% if subscription.amount > 1000 %}
+
+                    <li>
+                        Consider switching to a yearly plan to reduce costs.
+                    </li>
+
+                {% endif %}
+
+                {% if subscription.status == "Unused" %}
+
+                    <li>
+                        Cancel this subscription to save money.
+                    </li>
+
+                {% else %}
+
+                    <li>
+                        Subscription appears active and healthy.
+                    </li>
+
+                {% endif %}
+
+                <li>
+                    Monitor your monthly subscription spending.
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- Footer Buttons -->
+
+    <div class="details-actions">
+
+        <a href="{{ url_for('subscriptions') }}" class="action-btn">
+
+            ← Back
+
+        </a>
+
+        <button class="action-btn secondary">
+
+            Manage Plan
+
+        </button>
+
+        <button class="action-btn danger">
+
+            Cancel Subscription
+
+        </button>
+
+    </div>
+
+</div>
+
+{% endblock %}

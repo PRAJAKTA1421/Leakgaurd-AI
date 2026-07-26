@@ -7,10 +7,6 @@
     <a class="sidebar-link {{ 'active' if active_page == 'unused' }}" href="{{ url_for('unused_subscriptions') }}">🚫 <span>Unused Subscriptions</span></a>
     <a class="sidebar-link {{ 'active' if active_page == 'alerts' }}" href="{{ url_for('alerts') }}">🔔 <span>Alerts</span></a>
     <a class="sidebar-link {{ 'active' if active_page == 'reports' }}" href="{{ url_for('reports') }}">📄 <span>Reports</span></a>
-    <a class="sidebar-link {{ 'active' if active_page == 'data_sources' }}" href="{{ url_for('data_sources') }}">🗄️ <span>Data Sources</span></a>
-    <a class="sidebar-link {{ 'active' if active_page == 'settings' }}" href="{{ url_for('settings') }}">⚙️ <span>Settings</span></a>
   </nav>
   <a class="sidebar-logout" href="{{ url_for('logout') }}">⬅️ <span>Logout</span></a>
-  <div class="savings-mini-card"><span>Total Potential Savings</span><strong>₹2,743</strong><small>₹32,916 per year</small><b>●</b></div>
-  <div class="data-sources-mini"><strong>Data Sources Connected</strong><p>▣ Bank Statements <i>●</i></p><p>✉ SMS Alerts <i>●</i></p><p>▣ Email Inbox <i>●</i></p><button>Manage Data Sources</button></div>
 </aside>
